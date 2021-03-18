@@ -9,14 +9,19 @@
 #include "utility.h"
 #include "SystemTickCounter.h"
 
+#include "string.h"
+
 static bool hasWifi = false;
 int messageCount = 1;
 int sentMessageCount = 0;
+int max;
+int current = 0;
 static bool messageSending = true;
 static uint64_t send_interval_ms;
 
 static float temperature;
 static float humidity;
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
@@ -46,7 +51,7 @@ static void SendConfirmationCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result)
     sentMessageCount++;
   }
 
-  Screen.print(1, "> IoT Hub");
+  //Screen.print(1, "> IoT Hub");
   char line1[20];
   sprintf(line1, "Count: %d/%d",sentMessageCount, messageCount); 
   Screen.print(2, line1);
@@ -110,7 +115,7 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
 void setup()
 {
   Screen.init();
-  Screen.print(0, "IoT DevKit");
+  Screen.print(0, "Entrance Counter");
   Screen.print(2, "Initializing...");
   
   Screen.print(3, " > Serial");
@@ -146,6 +151,11 @@ void loop()
 {
   if (hasWifi)
   {
+    current += (!digitalRead(USER_BUTTON_A)) - (!digitalRead(USER_BUTTON_B));
+    char printCurrent[20];
+    sprintf(printCurrent,"%d",current);
+    Screen.print(1,printCurrent);
+    
     if (messageSending && 
         (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval())
     {
@@ -158,11 +168,12 @@ void loop()
       DevKitMQTTClient_SendEventInstance(message);
       
       send_interval_ms = SystemTickCounterRead();
+      
     }
     else
     {
       DevKitMQTTClient_Check();
     }
   }
-  delay(1000);
+  delay(200);
 }

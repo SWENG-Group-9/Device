@@ -7,11 +7,14 @@
 #include "parson.h"
 #include "config.h"
 #include "RGB_LED.h"
+#include "PinNames.h"
+
 
 #define RGB_LED_BRIGHTNESS 32
 
 DevI2C *i2c;
 HTS221Sensor *sensor;
+
 static RGB_LED rgbLed;
 static int interval = INTERVAL;
 static float humidity;
@@ -82,6 +85,8 @@ void SensorInit()
 
     humidity = -1;
     temperature = -1000;
+    pinMode(USER_BUTTON_A,INPUT);
+    pinMode(USER_BUTTON_B,INPUT);
 }
 
 float readTemperature()
@@ -104,13 +109,16 @@ float readHumidity()
     return humidity;
 }
 
+
+
 bool readMessage(int messageId, char *payload, float *temperatureValue, float *humidityValue)
 {
     JSON_Value *root_value = json_value_init_object();
     JSON_Object *root_object = json_value_get_object(root_value);
-    char *serialized_string = NULL;
-
+    char *serialized_string = NULL;  
     json_object_set_number(root_object, "messageId", messageId);
+
+    
 
     float t = readTemperature();
     float h = readHumidity();
