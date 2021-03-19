@@ -89,12 +89,20 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
 
   if (strcmp(methodName, "start") == 0)
   {
-    LogInfo("Start sending temperature and humidity data");
+    LogInfo("Turn On");
+    messageSending = true;
+  }
+  if (strcmp(methodName, "setCurrent") == 0)
+  {
+    LogInfo("Reset Current Value");
+    char* temp = (char*)payload;
+    int i = atoi(temp);
+    setCurrent(i);
     messageSending = true;
   }
   else if (strcmp(methodName, "stop") == 0)
   {
-    LogInfo("Stop sending temperature and humidity data");
+    LogInfo("Turn off");
     messageSending = false;
   }
   else
@@ -108,6 +116,10 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   *response = (unsigned char *)strdup(responseMessage);
 
   return result;
+}
+
+static void setCurrent(int i){
+  current = i;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +179,7 @@ void loop()
       DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
       DevKitMQTTClient_SendEventInstance(message);
       
-      send_interval_ms = SystemTickCounterRead();
+      send_interval_ms = SystemTickCounterRead(); 
       
     }
     else
@@ -175,5 +187,5 @@ void loop()
       DevKitMQTTClient_Check();
     }
   }
-  delay(200);
+  delay(50);
 }
