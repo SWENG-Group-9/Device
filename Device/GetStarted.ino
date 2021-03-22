@@ -14,6 +14,7 @@ int messageCount = 1;
 int sentMessageCount = 0;
 static bool messageSending = true;
 static uint64_t send_interval_ms;
+bool customerLimitReached = false;            // in person counter function, when limit is reached set this to true 
 
 static float temperature;
 static float humidity;
@@ -42,7 +43,7 @@ static void SendConfirmationCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result)
 {
   if (result == IOTHUB_CLIENT_CONFIRMATION_OK)
   {
-    blinkSendConfirmation();
+    //blinkSendConfirmation();                          removed as need led to indicate customer limit status
     sentMessageCount++;
   }
 
@@ -59,7 +60,7 @@ static void SendConfirmationCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result)
 
 static void MessageCallback(const char* payLoad, int size)
 {
-  blinkLED();
+  //blinkLED();                                         removed as need led to indicate customer limit status
   Screen.print(1, payLoad, true);
 }
 
@@ -156,6 +157,7 @@ void loop()
       EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
       DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
       DevKitMQTTClient_SendEventInstance(message);
+      setDoorStatus(customerLimitReached);                                                  //placed setDoorStatus in the loop as will need to check limit has not been reached constantly
       
       send_interval_ms = SystemTickCounterRead();
     }

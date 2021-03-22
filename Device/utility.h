@@ -12,5 +12,6 @@ void SensorInit(void);
 void blinkLED(void);
 void blinkSendConfirmation(void);
 int getInterval(void);
+void setDoorStatus(bool);
 
 #endif /* UTILITY_H */
