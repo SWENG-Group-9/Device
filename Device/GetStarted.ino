@@ -12,16 +12,8 @@
 #include "string.h"
 
 static bool hasWifi = false;
-int messageCount = 1;
-int sentMessageCount = 0;
-int max;
-int current = 0;
 static bool messageSending = true;
 static uint64_t send_interval_ms;
-
-static float temperature;
-static float humidity;
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
@@ -48,23 +40,11 @@ static void SendConfirmationCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result)
   if (result == IOTHUB_CLIENT_CONFIRMATION_OK)
   {
     blinkSendConfirmation();
-    sentMessageCount++;
   }
-
-  //Screen.print(1, "> IoT Hub");
-  char line1[20];
-  sprintf(line1, "Count: %d/%d",sentMessageCount, messageCount); 
-  Screen.print(2, line1);
-
-  char line2[20];
-  sprintf(line2, "T:%.2f H:%.2f", temperature, humidity);
-  Screen.print(3, line2);
-  messageCount++;
 }
 
 static void MessageCallback(const char* payLoad, int size)
 {
-  blinkLED();
   Screen.print(1, payLoad, true);
 }
 
@@ -92,17 +72,17 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
     LogInfo("Turn On");
     messageSending = true;
   }
-  if (strcmp(methodName, "setCurrent") == 0)
-  {
-    LogInfo("Reset Current Value");
-    char* temp = (char*)payload;
-    int i = atoi(temp);
-    setCurrent(i);
-    messageSending = true;
-  }
+
   else if (strcmp(methodName, "stop") == 0)
   {
     LogInfo("Turn off");
+    messageSending = false;
+  }
+
+  else if (strcmp(methodName, "door") == 0)
+  {
+    boolean lock = (bool) payload;
+    setDoorStatus(lock);
     messageSending = false;
   }
   else
@@ -118,8 +98,19 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   return result;
 }
 
-static void setCurrent(int i){
-  current = i;
+
+static void increaseI(){
+  char messagePayload[MESSAGE_MAX_LEN];
+  EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
+  DevKitMQTTClient_Event_AddProp(message, "increase",NULL);
+  DevKitMQTTClient_SendEventInstance(message);
+}
+
+static void decreaseI(){
+  char messagePayload[MESSAGE_MAX_LEN];
+  EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
+  DevKitMQTTClient_Event_AddProp(message, "decrease",NULL);
+  DevKitMQTTClient_SendEventInstance(message);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +135,6 @@ void setup()
 
   LogTrace("HappyPathSetup", NULL);
 
-  Screen.print(3, " > Sensors");
   SensorInit();
 
   Screen.print(3, " > IoT Hub");
@@ -157,31 +147,19 @@ void setup()
   DevKitMQTTClient_SetDeviceMethodCallback(DeviceMethodCallback);
 
   send_interval_ms = SystemTickCounterRead();
+  attachInterrupt(USER_BUTTON_A,increaseI,FALLING);
+  attachInterrupt(USER_BUTTON_B,decreaseI,FALLING);
 }
 
 void loop()
 {
   if (hasWifi)
   {
-    current += (!digitalRead(USER_BUTTON_A)) - (!digitalRead(USER_BUTTON_B));
-    char printCurrent[20];
-    sprintf(printCurrent,"%d",current);
-    Screen.print(1,printCurrent);
-    
     if (messageSending && 
-        (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval())
-    {
-      // Send teperature data
-      char messagePayload[MESSAGE_MAX_LEN];
-
-      bool temperatureAlert = readMessage(messageCount, messagePayload, &temperature, &humidity);
-      EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
-      DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
-      DevKitMQTTClient_SendEventInstance(message);
-      
-      send_interval_ms = SystemTickCounterRead(); 
-      
-    }
+        (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval()){
+          setDoorStatus(customerLimitReached);
+          send_interval_ms = SystemTickCounterRead(); 
+        }      
     else
     {
       DevKitMQTTClient_Check();
