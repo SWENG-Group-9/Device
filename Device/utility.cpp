@@ -104,6 +104,16 @@ float readHumidity()
     return humidity;
 }
 
+void setDoorStatus(bool limitReached){
+    if(!limitReached){
+        rgbLed.setColor(0,255,0);               //if limit is not reached, set led to green
+    }
+    else{
+        rgbLed.setColor(255,0,0);               //if limit reached set led to red
+    }
+}
+
+
 bool readMessage(int messageId, char *payload, float *temperatureValue, float *humidityValue)
 {
     JSON_Value *root_value = json_value_init_object();
