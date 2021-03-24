@@ -14,6 +14,7 @@
 static bool hasWifi = false;
 static bool messageSending = true;
 static uint64_t send_interval_ms;
+bool customerLimitReached = false;            // in person counter function, when limit is reached set this to true 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities

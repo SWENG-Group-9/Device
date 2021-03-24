@@ -86,6 +86,11 @@ void setDoorStatus(bool limitReached){
         rgbLed.setColor(255,0,0);               //if limit reached set led to red
     }
 }
+    }
+    else{
+        rgbLed.setColor(255,0,0);               //if limit reached set led to red
+    }
+}
 
 #if (DEVKIT_SDK_VERSION >= 10602)
 void __sys_setup(void)
