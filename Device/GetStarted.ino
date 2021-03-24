@@ -157,7 +157,6 @@ void loop()
   {
     if (messageSending && 
         (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval()){
-          setDoorStatus(customerLimitReached);
           send_interval_ms = SystemTickCounterRead(); 
         }      
     else
