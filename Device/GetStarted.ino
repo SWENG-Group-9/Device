@@ -14,7 +14,6 @@
 static bool hasWifi = false;
 static bool messageSending = true;
 static uint64_t send_interval_ms;
-bool customerLimitReached = false;            // in person counter function, when limit is reached set this to true 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
@@ -40,7 +39,8 @@ static void SendConfirmationCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result)
 {
   if (result == IOTHUB_CLIENT_CONFIRMATION_OK)
   {
-    blinkSendConfirmation();
+    Screen.print(3,"*********");
+    Screen.print(3,"         ");
   }
 }
 
@@ -80,10 +80,14 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
     messageSending = false;
   }
 
-  else if (strcmp(methodName, "door") == 0)
+  else if (strcmp(methodName, "lock") == 0)
   {
-    boolean lock = (bool) payload;
-    setDoorStatus(lock);
+    setDoorStatus(true);
+    messageSending = false;
+  }
+  else if (strcmp(methodName, "unlock") == 0)
+  {
+    setDoorStatus(false);
     messageSending = false;
   }
   else
@@ -100,17 +104,17 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
 }
 
 
-static void increaseI(){
+static void increase(){
   char messagePayload[MESSAGE_MAX_LEN];
+  messagePayload[0] = 'i';
   EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
-  DevKitMQTTClient_Event_AddProp(message, "increase",NULL);
   DevKitMQTTClient_SendEventInstance(message);
 }
 
-static void decreaseI(){
+static void decrease(){
   char messagePayload[MESSAGE_MAX_LEN];
+  messagePayload[0] = 'd';
   EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
-  DevKitMQTTClient_Event_AddProp(message, "decrease",NULL);
   DevKitMQTTClient_SendEventInstance(message);
 }
 
@@ -146,16 +150,16 @@ void setup()
   DevKitMQTTClient_SetMessageCallback(MessageCallback);
   DevKitMQTTClient_SetDeviceTwinCallback(DeviceTwinCallback);
   DevKitMQTTClient_SetDeviceMethodCallback(DeviceMethodCallback);
-
   send_interval_ms = SystemTickCounterRead();
-  attachInterrupt(USER_BUTTON_A,increaseI,FALLING);
-  attachInterrupt(USER_BUTTON_B,decreaseI,FALLING);
 }
 
 void loop()
 {
+
   if (hasWifi)
   {
+    if(!digitalRead(USER_BUTTON_A)) increase();
+    if(!digitalRead(USER_BUTTON_B)) decrease();
     if (messageSending && 
         (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval()){
           send_interval_ms = SystemTickCounterRead(); 
@@ -165,5 +169,5 @@ void loop()
       DevKitMQTTClient_Check();
     }
   }
-  delay(50);
+  delay(10);
 }

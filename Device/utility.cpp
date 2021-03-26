@@ -20,22 +20,6 @@ int getInterval()
     return interval;
 }
 
-void blinkLED()
-{
-    rgbLed.turnOff();
-    rgbLed.setColor(RGB_LED_BRIGHTNESS, 0, 0);
-    delay(500);
-    rgbLed.turnOff();
-}
-
-void blinkSendConfirmation()
-{
-    rgbLed.turnOff();
-    rgbLed.setColor(0, 0, RGB_LED_BRIGHTNESS);
-    delay(500);
-    rgbLed.turnOff();
-}
-
 void parseTwinMessage(DEVICE_TWIN_UPDATE_STATE updateState, const char *message)
 {
     JSON_Value *root_value;
@@ -81,11 +65,6 @@ void SensorInit()
 void setDoorStatus(bool limitReached){
     if(!limitReached){
         rgbLed.setColor(0,255,0);               //if limit is not reached, set led to green
-    }
-    else{
-        rgbLed.setColor(255,0,0);               //if limit reached set led to red
-    }
-}
     }
     else{
         rgbLed.setColor(255,0,0);               //if limit reached set led to red
