@@ -13,6 +13,7 @@ namespace Server
     public class Program
     {
         public static int current = 15;
+        //maybe change this variable name to currentCustomers to avoid confusion with api calls
         public static int max = 10;
         static string[] devices = new string[]{"AZ-c89346886016"};
         static ThreadStart hostTS = new ThreadStart(host);

@@ -1,0 +1,5 @@
+C:\Users\conor\OneDrive\Desktop\Device\server\obj\Debug\net5.0\server.csprojAssemblyReference.cache
+C:\Users\conor\OneDrive\Desktop\Device\server\obj\Debug\net5.0\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\conor\OneDrive\Desktop\Device\server\obj\Debug\net5.0\server.AssemblyInfoInputs.cache
+C:\Users\conor\OneDrive\Desktop\Device\server\obj\Debug\net5.0\server.AssemblyInfo.cs
+C:\Users\conor\OneDrive\Desktop\Device\server\obj\Debug\net5.0\server.csproj.CoreCompileInputs.cache
