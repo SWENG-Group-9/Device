@@ -8,7 +8,7 @@ namespace server
 {
     public class serv
     {
-        static string[] devices = new string[]{"AZ-c89346886016"};
+        static string[] devices = new string[]{"az-c89346883a40"};
         public static async Task Main(String[] args)
         {
             await InvokeDeviceMethod.Program.deviceMethod("unlock",devices);

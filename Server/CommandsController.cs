@@ -4,38 +4,46 @@ using Server;
 
 namespace Server.Controllers
 {
-    [Route("api/current")]
+    [Route("api/commands")]
     [ApiController]
     public class CurrentController : ControllerBase
     {
-       // private readonly ICommanderRepo _repository;
-
-        public CurrentController()
-        {
-            //_repository = repository;
-        }
-
-        //GET api/current
-        //  gets current number of customers in shop
-        [HttpGet]
-        public ActionResult <int>GetCurrent()
+        //get current customers
+        // GET api/commands/1
+        [HttpGet("1")]
+        public ActionResult<int> GetCurrent()
         {
             var commandItem = Server.Program.current;
             return Ok(commandItem);
         }
-
-        //PUT api/current
-        //  updates allowed max number of customers
-        [HttpGet]
-        public ActionResult <int>UpdateMax(CommandUpdateDto commandUpdateDto)
+        //get maximum  number of customers
+        // GET api/commands/0
+        [HttpGet("0")]
+        public ActionResult<int> GetMax()
         {
-            var commandModelFromServer=Server.Program.max;
-            if(commandModelFromServer==null)
-            {
-                return NotFound();
-            }
-            _mapper.Map(commandUpdateDto,commandModelFromServer);
+            var commandItem = Server.Program.max;
+            return Ok(commandItem);
         }
 
+        //change max value
+        // PUT api/commands/0
+        [HttpPut("0")]
+        public ActionResult PutMax(int newMax)
+        {
+            //newMax = 15;          //test value for updating max
+            Server.Program.max = newMax;
+            return NoContent();
+        }
+
+
     }
+    /*
+         get max value      done
+         change max value   done
+         get current value  done
+         manual lock door
+         manual unlock door
+         pull stats
+         send stats
+    */
 }
