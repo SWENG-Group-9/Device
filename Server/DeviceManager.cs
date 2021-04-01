@@ -59,7 +59,7 @@ namespace register
                 device = await RM.AddDeviceAsync(new Device(deviceID));
                 Server.Program.devices.Add(deviceID);
                 var dev = RM.GetDeviceAsync(deviceID).Result;
-                deviceconn = dev.Authentication.SymmetricKey.PrimaryKey;
+                deviceconn ="HostName=sweng.azure-devices.net;DeviceId=" + deviceID +";SharedAccessKey=" + dev.Authentication.SymmetricKey.PrimaryKey;
             }
             catch (DeviceAlreadyExistsException dvcEx)
             {
