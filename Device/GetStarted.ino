@@ -12,7 +12,8 @@
 #include "string.h"
 
 static bool hasWifi = false;
-static bool messageSending = true;
+static bool in = false;
+static bool out = false;
 static uint64_t send_interval_ms;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,27 +69,29 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   const char *responseMessage = "\"Successfully invoke device method\"";
   int result = 200;
 
-  if (strcmp(methodName, "start") == 0)
-  {
-    LogInfo("Turn On");
-    messageSending = true;
-  }
 
-  else if (strcmp(methodName, "stop") == 0)
-  {
-    LogInfo("Turn off");
-    messageSending = false;
-  }
-
-  else if (strcmp(methodName, "lock") == 0)
+  if (strcmp(methodName, "lock") == 0)
   {
     setDoorStatus(true);
-    messageSending = false;
   }
   else if (strcmp(methodName, "unlock") == 0)
   {
     setDoorStatus(false);
-    messageSending = false;
+  }
+  else if (strcmp(methodName, "in") == 0)
+  {
+    in = true;
+    out = false;
+  }
+  else if (strcmp(methodName, "out") == 0)
+  {
+    in = false;
+    out = true;
+  }
+  else if (strcmp(methodName, "both") == 0)
+  {
+    in = true;
+    out = true;
   }
   else
   {
@@ -158,10 +161,10 @@ void loop()
 
   if (hasWifi)
   {
-    if(!digitalRead(USER_BUTTON_A)) increase();
-    if(!digitalRead(USER_BUTTON_B)) decrease();
-    if (messageSending && 
-        (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval()){
+      if(!digitalRead(USER_BUTTON_A) && in) increase();
+      if(!digitalRead(USER_BUTTON_B) && out) decrease();
+    
+    if ((int)(SystemTickCounterRead() - send_interval_ms) >= getInterval()){
           send_interval_ms = SystemTickCounterRead(); 
         }      
     else
