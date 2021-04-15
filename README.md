@@ -33,7 +33,7 @@ After filling in the name and type of the device, and submitting, this will retu
 
 ### Send DevKit telemetry
 
-The DevKit connects to a device-specific endpoint on your IoT hub and sends temperature and humidity telemetry.
+The DevKit connects to a device-specific endpoint on your IoT hub.
 
 1. Download the latest version of [GetStarted firmware](https://aka.ms/devkit/prod/getstarted/latest) for IoT DevKit.
 
@@ -153,9 +153,7 @@ Follow these steps to prepare the development environment for the DevKit:
     sudo usermod -a -G plugdev $(whoami)
     ```
 
-Now you are all set with preparing and configuring your development environment. Let us build the GetStarted sample you just ran.
-
-## Build your first project
+## Build the device code
 
 Download the `Device` folder from the repository and open it in VSCode.
 
