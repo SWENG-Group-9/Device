@@ -27,7 +27,7 @@ To connect the DevKit to your computer, follow these steps:
 
 Log in on [the frontend website](https://pandemicsafetysuite.azurewebsites.net) and click the large **+** to find the add device screen.
 
-    ![addnewdevice](media/addedevice.PNG)
+    ![add new device](media/addedevice.PNG)
     
 After filling in the name and type of the device, and submitting, this will return a device connection string for your new device. Make note of this as it will be required later.
 
