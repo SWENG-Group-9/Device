@@ -114,6 +114,13 @@ static void increase(){
   DevKitMQTTClient_SendEventInstance(message);
 }
 
+static void addDeviceAfterStartup(){
+  char messagePayload[MESSAGE_MAX_LEN];
+  messagePayload[0] = 's';
+  EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
+  DevKitMQTTClient_SendEventInstance(message);
+}
+
 static void decrease(){
   char messagePayload[MESSAGE_MAX_LEN];
   messagePayload[0] = 'd';
@@ -153,6 +160,7 @@ void setup()
   DevKitMQTTClient_SetMessageCallback(MessageCallback);
   DevKitMQTTClient_SetDeviceTwinCallback(DeviceTwinCallback);
   DevKitMQTTClient_SetDeviceMethodCallback(DeviceMethodCallback);
+  addDeviceAfterStartup();
   send_interval_ms = SystemTickCounterRead();
 }
 
