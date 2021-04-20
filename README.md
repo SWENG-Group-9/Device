@@ -27,13 +27,13 @@ To connect the DevKit to your computer, follow these steps:
 
 Log in on [the frontend website](https://pandemicsafetysuite.azurewebsites.net) and click the large **+** to find the add device screen.
 
-    ![addnewdevice](media/addedevice.PNG)
+   ![add new device](media/adddevice.PNG)
     
 After filling in the name and type of the device, and submitting, this will return a device connection string for your new device. Make note of this as it will be required later.
 
 ### Send DevKit telemetry
 
-The DevKit connects to a device-specific endpoint on your IoT hub and sends temperature and humidity telemetry.
+The DevKit connects to a device-specific endpoint on your IoT hub.
 
 1. Download the latest version of [GetStarted firmware](https://aka.ms/devkit/prod/getstarted/latest) for IoT DevKit.
 
@@ -153,9 +153,7 @@ Follow these steps to prepare the development environment for the DevKit:
     sudo usermod -a -G plugdev $(whoami)
     ```
 
-Now you are all set with preparing and configuring your development environment. Let us build the GetStarted sample you just ran.
-
-## Build your first project
+## Build the device code
 
 Download the `Device` folder from the repository and open it in VSCode.
 
